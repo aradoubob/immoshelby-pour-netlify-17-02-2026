@@ -1,39 +1,64 @@
 @echo off
-REM Script pour préparer le projet ImmoShelby pour StackBlitz (Windows)
-REM Ce script crée un fichier ZIP prêt à être importé dans StackBlitz
+REM Script de préparation pour export vers StackBlitz (Windows)
+REM Ce script crée un ZIP propre avec tous les fichiers nécessaires
 
-echo 🚀 Préparation du projet pour StackBlitz...
+echo === Preparation du projet pour StackBlitz ===
+echo.
 
-SET OUTPUT_FILE=immoshelby-stackblitz.zip
+SET OUTPUT_FILE=stackblitz-project.zip
 
 REM Supprimer l'ancien ZIP s'il existe
 if exist "%OUTPUT_FILE%" (
-    echo 🗑️  Suppression de l'ancien fichier ZIP...
+    echo Suppression de l'ancien fichier ZIP...
     del "%OUTPUT_FILE%"
 )
 
-REM Vérifier si PowerShell est disponible pour créer le ZIP
-echo 📦 Création du fichier ZIP...
+echo Creation du fichier ZIP avec tous les fichiers essentiels...
+echo.
+echo Inclusion de:
+echo   - Fichiers de configuration (package.json, vite.config.ts, etc.)
+echo   - Dossier .bolt/ (config Bolt.new)
+echo   - Dossier src/ complet
+echo   - Dossier public/ (logo)
+echo   - Dossier supabase/migrations/
+echo   - Variables d'environnement (.stackblitzrc)
+echo.
 
-powershell -Command "& { $exclude = @('node_modules', 'dist', '.git', '*.log', '.DS_Store', 'prepare-stackblitz.bat', 'prepare-stackblitz.sh', 'immoshelby-stackblitz.zip'); Get-ChildItem -Path . -Recurse | Where-Object { $excl = $false; foreach($e in $exclude) { if($_.FullName -like \"*$e*\") { $excl = $true; break } }; -not $excl } | Compress-Archive -DestinationPath '%OUTPUT_FILE%' -Force }"
+REM Créer le ZIP avec PowerShell
+powershell -Command "& { $files = Get-ChildItem -Path . -Recurse -File | Where-Object { $_.FullName -notmatch '\\node_modules\\|\\dist\\|\\.git\\|\\.log$|\\.DS_Store|prepare-stackblitz\\.(sh|bat)|stackblitz-project\\.zip' }; Compress-Archive -Path $files.FullName -DestinationPath '%OUTPUT_FILE%' -Force }"
 
 if %ERRORLEVEL% EQU 0 (
-    echo ✅ Fichier créé avec succès : %OUTPUT_FILE%
     echo.
-    echo 📋 Prochaines étapes :
-    echo    1. Allez sur https://stackblitz.com/
-    echo    2. Cliquez sur 'Import Project'
-    echo    3. Sélectionnez 'Upload from your computer'
-    echo    4. Uploadez le fichier %OUTPUT_FILE%
+    echo Fichier cree avec succes!
     echo.
-    echo ℹ️  Le fichier .stackblitzrc contient déjà les variables d'environnement Supabase
+
+    REM Afficher la taille du fichier
+    for %%A in ("%OUTPUT_FILE%") do echo Taille: %%~zA octets
+
+    echo.
+    echo Prochaines etapes:
+    echo   1. Telechargez le fichier: %OUTPUT_FILE%
+    echo   2. Allez sur https://stackblitz.com/
+    echo   3. Cliquez sur 'Import Project'
+    echo   4. Selectionnez 'Upload from your computer'
+    echo   5. Uploadez le fichier %OUTPUT_FILE%
+    echo   6. Attendez l'installation automatique des dependances
+    echo   7. Le projet demarrera avec 'npm run dev'
+    echo.
+    echo Important:
+    echo   - Le .stackblitzrc contient les variables Supabase
+    echo   - Tous les fichiers src/, components/, pages/ sont inclus
+    echo   - Les migrations Supabase sont incluses
+    echo.
 ) else (
-    echo ❌ Erreur lors de la création du fichier ZIP
+    echo Erreur lors de la creation du fichier ZIP
     echo.
-    echo 💡 Alternative : Créez manuellement un fichier ZIP contenant :
-    echo    - Tous les fichiers du projet
-    echo    - SAUF les dossiers node_modules et dist
-    pause
+    echo Alternative manuelle:
+    echo   1. Selectionnez tous les fichiers du projet
+    echo   2. EXCLUEZ: node_modules, dist, .git
+    echo   3. Clic droit ^> Envoyer vers ^> Dossier compresse
+    echo   4. Nommez le fichier: stackblitz-project.zip
+    echo.
 )
 
 pause
