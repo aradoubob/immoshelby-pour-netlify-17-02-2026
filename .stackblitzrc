@@ -8,5 +8,5 @@
     "NODE_ENV": "development"
   },
   "compileTrigger": "auto",
-  "openFile": "src/App.tsx"
+  "openFile": "index.html"
 }
