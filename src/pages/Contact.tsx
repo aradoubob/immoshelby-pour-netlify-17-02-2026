@@ -22,11 +22,11 @@ export const Contact: React.FC = () => {
     try {
       const { error } = await supabase.from('schedule').insert([
         {
-          property_id: '00000000-0000-0000-0000-000000000000',
-          visitor_name: formData.name,
-          visitor_email: formData.email,
-          visitor_phone: formData.phone,
-          preferred_date: new Date().toISOString(),
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          date: new Date().toISOString().split('T')[0],
+          time: '10:00',
           message: formData.message,
         },
       ]);

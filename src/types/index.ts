@@ -6,16 +6,22 @@ export interface Property {
   id: string;
   title_fr: string;
   title_en: string;
-  title_ar: string;
+  title_ro?: string;
   description_fr: string;
   description_en: string;
-  description_ar: string;
+  description_ro?: string;
   price: number;
-  location: string;
-  bedrooms: number;
+  location_fr: string;
+  location_en: string;
+  location_ro?: string;
+  city: string;
+  rooms: number;
   bathrooms: number;
-  area: number;
-  image_url: string;
+  surface: number;
+  images: string[];
+  type: 'sale' | 'rent';
+  category: 'apartment' | 'house' | 'land' | 'commercial';
+  features?: string[];
   status: PropertyStatus;
   created_at: string;
 }

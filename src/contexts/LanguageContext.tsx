@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import type { Language } from '../types';
+import type { Language, Property, TranslatedProperty } from '../types';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  translateProperty: (property: Property) => TranslatedProperty;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -121,8 +122,28 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     return translations[language][key] || key;
   };
 
+  const translateProperty = (property: Property): TranslatedProperty => {
+    const locationKey = `location_${language}` as keyof Property;
+    const titleKey = `title_${language}` as keyof Property;
+    const descriptionKey = `description_${language}` as keyof Property;
+
+    return {
+      id: property.id,
+      title: (property[titleKey] as string) || property.title_fr,
+      description: (property[descriptionKey] as string) || property.description_fr,
+      price: property.price,
+      location: (property[locationKey] as string) || property.location_fr,
+      bedrooms: property.rooms,
+      bathrooms: property.bathrooms,
+      area: property.surface,
+      image_url: property.images && property.images[0] ? property.images[0] : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
+      status: property.status,
+      created_at: property.created_at,
+    };
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, translateProperty }}>
       {children}
     </LanguageContext.Provider>
   );
