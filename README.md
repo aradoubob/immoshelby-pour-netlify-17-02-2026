@@ -57,34 +57,9 @@ npm run dev
 Le projet est configuré pour Netlify avec le fichier `dist/_redirects` pour le routing SPA.
 
 ### StackBlitz
-
-⚠️ **Important** : Le fichier `.stackblitzrc` contient déjà les variables d'environnement Supabase configurées.
-
-#### Option 1 : Importer depuis GitHub
-1. Visitez : `https://stackblitz.com/github/VOTRE_USERNAME/VOTRE_REPO`
-2. StackBlitz détectera automatiquement le fichier `.stackblitzrc`
-3. Les dépendances seront installées automatiquement
-
-#### Option 2 : Importer un dossier local
-1. Allez sur https://stackblitz.com/
-2. Cliquez sur "Import Project"
-3. Sélectionnez l'option "Upload from your computer"
-4. Créez un fichier ZIP du projet (excluant `node_modules` et `dist`)
-5. Uploadez le ZIP
-6. StackBlitz installera automatiquement les dépendances via le `.stackblitzrc`
-
-#### Dépannage StackBlitz
-
-Si vous obtenez l'erreur `npm error code ENOENT` :
-1. Vérifiez que le fichier `package.json` est bien présent à la racine du projet
-2. Assurez-vous que tous les fichiers ont été correctement importés
-3. Vérifiez dans la sidebar de StackBlitz que vous voyez la structure complète du projet
-4. Si nécessaire, réessayez l'import en vous assurant que le ZIP contient bien tous les fichiers
-
-Le `.stackblitzrc` est configuré pour :
-- Installer automatiquement les dépendances
-- Lancer `npm run dev` au démarrage
-- Injecter les variables d'environnement Supabase
+Pour ouvrir ce projet dans StackBlitz :
+1. Visitez : `https://stackblitz.com/github/immoshelby-pour-netlify-17-02-2026/main`
+2. Ajoutez vos variables d'environnement dans les paramètres du projet
 
 ## Structure du Projet
 
@@ -110,39 +85,6 @@ supabase/
 - `npm run preview` - Prévisualise le build de production
 - `npm run lint` - Vérifie le code avec ESLint
 - `npm run typecheck` - Vérifie les types TypeScript
-- `npm run stackblitz` - Lance le serveur pour StackBlitz/WebContainer
-- `npm run stackblitz:build` - Build et prévisualise pour StackBlitz
-
-## Utilisation avec Bolt.new
-
-Ce projet est optimisé pour fonctionner avec Bolt.new (l'IDE AI de StackBlitz). La configuration spéciale se trouve dans le dossier `.bolt/` :
-
-### Configuration Bolt
-
-- `.bolt/config.json` - Configuration du projet pour Bolt AI
-- `.bolt/ignore` - Fichiers exclus du contexte AI
-- `.bolt/prompt` - Documentation de l'architecture pour l'IA
-
-### Fonctionnalités Bolt
-
-Lorsque vous utilisez ce projet dans Bolt.new :
-- Les dépendances s'installent automatiquement
-- Le serveur de développement démarre automatiquement
-- Les variables d'environnement Supabase sont préconfigurées
-- L'IA comprend l'architecture grâce au fichier `.bolt/prompt`
-
-### Résolution de Problèmes Bolt-StackBlitz
-
-Si le projet ne démarre pas dans Bolt.new :
-
-1. Vérifiez que tous les fichiers `.bolt/` sont présents
-2. Assurez-vous que le `.stackblitzrc` contient les bonnes variables d'environnement
-3. Le projet utilise Node.js 18 (configuré dans `.stackblitzrc`)
-4. WebContainer nécessite une connexion internet stable
-
-### Synchronisation Bolt ↔ GitHub
-
-Les changements dans Bolt.new sont automatiquement liés au dépôt GitHub. Toute modification dans Bolt sera reflétée dans StackBlitz.
 
 ## Base de données
 

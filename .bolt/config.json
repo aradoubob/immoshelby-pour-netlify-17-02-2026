@@ -1,18 +1,3 @@
 {
-  "projectName": "Gestion Immobilière Multilingue",
-  "framework": "react",
-  "buildTool": "vite",
-  "packageManager": "npm",
-  "database": "supabase",
-  "features": [
-    "authentication",
-    "i18n",
-    "admin-panel",
-    "property-management"
-  ],
-  "environment": "webcontainer",
-  "compatibility": {
-    "stackblitz": true,
-    "bolt": true
-  }
+  "template": "bolt-vite-react-ts"
 }
