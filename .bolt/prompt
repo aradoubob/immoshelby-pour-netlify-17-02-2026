@@ -1,0 +1,77 @@
+# Architecture du Projet - Gestion Immobilière Multilingue
+
+## Structure Principale
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **Router**: React Router DOM v7
+- **Base de données**: Supabase (PostgreSQL)
+- **Authentification**: Supabase Auth (email/password)
+- **Icons**: Lucide React
+
+## Organisation des Fichiers
+
+### /src/pages/
+- `Home.tsx` - Page d'accueil avec liste des propriétés
+- `PropertiesList.tsx` - Liste complète des propriétés
+- `PropertyDetails.tsx` - Détails d'une propriété
+- `Contact.tsx` - Page de contact
+- `/admin/` - Section administration (Login, Dashboard, PropertiesManagement)
+
+### /src/components/
+- `Layout.tsx` - Layout principal avec navigation
+- `PropertyCard.tsx` - Carte d'affichage d'une propriété
+- `ProtectedRoute.tsx` - Route protégée pour l'admin
+- `Button.tsx`, `LoadingSpinner.tsx` - Composants UI
+
+### /src/contexts/
+- `AuthContext.tsx` - Gestion de l'authentification admin
+- `LanguageContext.tsx` - Gestion du multilinguisme (fr/en/ar)
+
+### /src/lib/
+- `supabase.ts` - Configuration client Supabase
+- `translation.ts` - Service de traduction automatique
+
+### /src/types/
+- `index.ts` - Définitions TypeScript
+
+## Base de Données Supabase
+
+### Tables:
+1. **properties** - Stockage des propriétés avec traductions automatiques
+2. **schedule** - Demandes de rendez-vous
+3. **admin_profiles** - Profils administrateurs
+
+### Sécurité:
+- RLS activé sur toutes les tables
+- Policies restrictives basées sur l'authentification
+
+## Fonctionnalités Clés
+
+1. **Multilinguisme** (fr/en/ar)
+   - Traduction automatique via Edge Functions
+   - Détection automatique de la langue
+   - Changement de langue en temps réel
+
+2. **Gestion des Propriétés**
+   - CRUD complet pour les admins
+   - Upload d'images
+   - Statut (disponible/vendu/loué)
+
+3. **Authentification Admin**
+   - Login sécurisé
+   - Routes protégées
+   - Session persistante
+
+4. **Formulaire de Contact**
+   - Prise de rendez-vous
+   - Stockage dans Supabase
+
+## Notes Importantes pour l'IA
+
+- Toujours utiliser les hooks existants (useTranslatedProperty, useAuth, useLanguage)
+- Suivre les conventions de nommage existantes
+- Maintenir la cohérence du style Tailwind
+- Respecter la structure des contextes React
+- Tester les traductions dans les 3 langues
+- Vérifier les policies RLS avant tout changement de schéma

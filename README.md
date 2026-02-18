@@ -110,6 +110,39 @@ supabase/
 - `npm run preview` - Prévisualise le build de production
 - `npm run lint` - Vérifie le code avec ESLint
 - `npm run typecheck` - Vérifie les types TypeScript
+- `npm run stackblitz` - Lance le serveur pour StackBlitz/WebContainer
+- `npm run stackblitz:build` - Build et prévisualise pour StackBlitz
+
+## Utilisation avec Bolt.new
+
+Ce projet est optimisé pour fonctionner avec Bolt.new (l'IDE AI de StackBlitz). La configuration spéciale se trouve dans le dossier `.bolt/` :
+
+### Configuration Bolt
+
+- `.bolt/config.json` - Configuration du projet pour Bolt AI
+- `.bolt/ignore` - Fichiers exclus du contexte AI
+- `.bolt/prompt` - Documentation de l'architecture pour l'IA
+
+### Fonctionnalités Bolt
+
+Lorsque vous utilisez ce projet dans Bolt.new :
+- Les dépendances s'installent automatiquement
+- Le serveur de développement démarre automatiquement
+- Les variables d'environnement Supabase sont préconfigurées
+- L'IA comprend l'architecture grâce au fichier `.bolt/prompt`
+
+### Résolution de Problèmes Bolt-StackBlitz
+
+Si le projet ne démarre pas dans Bolt.new :
+
+1. Vérifiez que tous les fichiers `.bolt/` sont présents
+2. Assurez-vous que le `.stackblitzrc` contient les bonnes variables d'environnement
+3. Le projet utilise Node.js 18 (configuré dans `.stackblitzrc`)
+4. WebContainer nécessite une connexion internet stable
+
+### Synchronisation Bolt ↔ GitHub
+
+Les changements dans Bolt.new sont automatiquement liés au dépôt GitHub. Toute modification dans Bolt sera reflétée dans StackBlitz.
 
 ## Base de données
 
