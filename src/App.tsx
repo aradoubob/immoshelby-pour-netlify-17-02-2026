@@ -120,20 +120,22 @@ function HomePage() {
 
 function Header() {
   return (
-    <header className="bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-white shadow-sm border-b border-gray-200">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Logo" className="h-10 w-10 rounded-full" />
-            <span className="text-2xl font-bold text-blue-600">Imobiliare</span>
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
+              <Building2 className="w-7 h-7 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-gray-800">Imobiliare</span>
           </Link>
           <nav className="flex items-center gap-6">
             <Link
               to="/"
-              className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
             >
               <Home className="w-5 h-5" />
-              <span>Accueil</span>
+              <span className="hidden sm:inline">Accueil</span>
             </Link>
             <LanguageSelector />
           </nav>
