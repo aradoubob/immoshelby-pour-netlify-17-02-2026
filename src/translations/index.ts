@@ -66,8 +66,8 @@ export const translations = {
   ro: {
     nav: {
       home: 'Acasă',
-      sale: 'Vânzare',
-      rent: 'Închiriere',
+      sale: 'De vânzare',
+      rent: 'De închiriat',
       contact: 'Contact',
       admin: 'Admin',
       logout: 'Deconectare',
