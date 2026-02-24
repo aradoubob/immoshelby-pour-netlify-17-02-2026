@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Property } from '../types';
@@ -8,7 +8,8 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function PropertiesList() {
-  const { type } = useParams<{ type: 'sale' | 'rent' }>();
+  const location = useLocation();
+  const type = location.pathname.includes('/sale') ? 'sale' : 'rent';
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
