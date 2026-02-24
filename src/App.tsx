@@ -9,10 +9,14 @@ import { useTranslatedProperty } from './hooks/useTranslatedProperty';
 function PropertyCard({ property }: { property: Property }) {
   const translated = useTranslatedProperty(property);
 
+  const firstImage = property.images && Array.isArray(property.images) && property.images.length > 0
+    ? property.images[0]
+    : '/placeholder.jpg';
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
       <img
-        src={property.image_url || '/placeholder.jpg'}
+        src={firstImage}
         alt={translated.title}
         className="w-full h-48 object-cover"
       />
@@ -27,12 +31,12 @@ function PropertyCard({ property }: { property: Property }) {
           {translated.isTranslating ? '...' : translated.description}
         </p>
         <div className="flex justify-between items-center text-sm text-gray-600">
-          <span>{property.bedrooms} chambres</span>
+          <span>{property.rooms} chambres</span>
           <span>{property.bathrooms} salles de bain</span>
-          <span>{property.area} m²</span>
+          <span>{property.surface} m²</span>
         </div>
         <div className="mt-4 text-2xl font-bold text-blue-600">
-          €{property.price.toLocaleString()}
+          €{Number(property.price).toLocaleString()}
         </div>
       </div>
     </div>
@@ -67,8 +71,10 @@ function HomePage() {
       try {
         const { data, error } = await supabase
           .from('properties')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('id, title_ro, title_fr, title_en, description_ro, description_fr, description_en, location_ro, location_fr, location_en, price, rooms, bathrooms, surface, images, city, type, category, status, featured, created_at')
+          .eq('status', 'available')
+          .order('created_at', { ascending: false })
+          .limit(50);
 
         if (error) throw error;
         setProperties(data || []);

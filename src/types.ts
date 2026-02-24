@@ -10,10 +10,15 @@ export interface Property {
   description_en?: string | null;
   location_en?: string | null;
   price: number;
-  bedrooms: number;
+  rooms: number;
   bathrooms: number;
-  area: number;
-  image_url: string;
+  surface: number;
+  images?: any;
+  city: string;
+  type: 'sale' | 'rent';
+  category: 'apartment' | 'house' | 'land' | 'commercial';
+  status?: string;
+  featured?: boolean;
   created_at?: string;
 }
 
