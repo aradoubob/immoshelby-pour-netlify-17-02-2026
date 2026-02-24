@@ -124,9 +124,11 @@ function Header() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
-              <Building2 className="w-7 h-7 text-white" />
-            </div>
+            <img
+              src="/logo.jpg"
+              alt="Logo Imobiliare"
+              className="w-12 h-12 object-cover rounded-lg shadow-md"
+            />
             <span className="text-2xl font-bold text-gray-800">Imobiliare</span>
           </Link>
           <nav className="flex items-center gap-6">
