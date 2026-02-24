@@ -1,16 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase configuration error:');
-  console.error('VITE_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
-  console.error('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
-  console.error('Please restart the dev server to load environment variables from .env file');
-  throw new Error(
-    'Missing Supabase environment variables. Please restart the dev server to load .env file.'
-  );
+  console.warn('Supabase configuration warning:');
+  console.warn('VITE_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
+  console.warn('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
+  console.warn('The app will run but Supabase features will not work until environment variables are loaded.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key'
+);
