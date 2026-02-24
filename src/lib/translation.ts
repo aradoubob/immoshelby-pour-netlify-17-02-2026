@@ -91,6 +91,20 @@ export async function translateProperty(
     translateText(property.location_ro, targetLang),
   ]);
 
+  try {
+    const updates: any = {};
+    updates[titleKey] = title;
+    updates[descriptionKey] = description;
+    updates[locationKey] = location;
+
+    await supabase
+      .from('properties')
+      .update(updates)
+      .eq('id', property.id);
+  } catch (error) {
+    console.error('Failed to cache translation:', error);
+  }
+
   return { title, description, location };
 }
 
