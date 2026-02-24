@@ -71,15 +71,20 @@ function HomePage() {
       try {
         const { data, error } = await supabase
           .from('properties')
-          .select('id, title_ro, title_fr, title_en, description_ro, description_fr, description_en, location_ro, location_fr, location_en, price, rooms, bathrooms, surface, images, city, type, category, status, featured, created_at')
+          .select('*')
           .eq('status', 'available')
           .order('created_at', { ascending: false })
-          .limit(50);
+          .limit(20);
 
-        if (error) throw error;
-        setProperties(data || []);
+        if (error) {
+          console.error('Error fetching properties:', error);
+          setProperties([]);
+        } else {
+          setProperties(data || []);
+        }
       } catch (error) {
         console.error('Error fetching properties:', error);
+        setProperties([]);
       } finally {
         setLoading(false);
       }
