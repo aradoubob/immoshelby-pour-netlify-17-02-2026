@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, Home, TrendingUp } from 'lucide-react';
+import { Building2, Home, TrendingUp, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -87,7 +87,7 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-xl mx-auto space-y-4">
         <Link
           to="/admin/properties"
           className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow block"
@@ -104,6 +104,27 @@ export function Dashboard() {
                 {language === 'fr'
                   ? 'Gérer vos propriétés'
                   : 'Gestionați proprietățile'}
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/opening-hours"
+          className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow block"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="bg-green-100 p-4 rounded-lg">
+              <Clock className="w-8 h-8 text-green-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">
+                {language === 'fr' ? "Horaires d'ouverture" : 'Orele de deschidere'}
+              </h2>
+              <p className="text-gray-600">
+                {language === 'fr'
+                  ? "Gérer les horaires d'ouverture"
+                  : 'Gestionați orele de deschidere'}
               </p>
             </div>
           </div>

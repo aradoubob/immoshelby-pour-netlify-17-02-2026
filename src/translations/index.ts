@@ -56,6 +56,28 @@ export const translations = {
       save: 'Enregistrer',
       cancel: 'Annuler',
     },
+    openingHours: {
+      management: {
+        title: "Gestion des horaires d'ouverture",
+        description: 'Configurez les horaires d\'ouverture de votre agence',
+      },
+      weekdays: 'Lundi - Vendredi',
+      saturday: 'Samedi',
+      sunday: 'Dimanche',
+      openingTime: 'Heure d\'ouverture',
+      closingTime: 'Heure de fermeture',
+      open: 'Ouvert',
+      closed: 'Fermé',
+      save: 'Enregistrer',
+      saving: 'Enregistrement...',
+      validation: {
+        invalidTime: 'L\'heure d\'ouverture doit être avant l\'heure de fermeture',
+      },
+      messages: {
+        updateSuccess: 'Horaires mis à jour avec succès',
+        updateError: 'Erreur lors de la mise à jour des horaires',
+      },
+    },
     common: {
       loading: 'Chargement...',
       error: 'Erreur',
@@ -119,6 +141,28 @@ export const translations = {
       deleteProperty: 'Șterge',
       save: 'Salvează',
       cancel: 'Anulează',
+    },
+    openingHours: {
+      management: {
+        title: 'Gestionarea programului de lucru',
+        description: 'Configurați programul de lucru al agenției dvs.',
+      },
+      weekdays: 'Luni - Vineri',
+      saturday: 'Sâmbătă',
+      sunday: 'Duminică',
+      openingTime: 'Ora de deschidere',
+      closingTime: 'Ora de închidere',
+      open: 'Deschis',
+      closed: 'Închis',
+      save: 'Salvează',
+      saving: 'Se salvează...',
+      validation: {
+        invalidTime: 'Ora de deschidere trebuie să fie înainte de ora de închidere',
+      },
+      messages: {
+        updateSuccess: 'Programul a fost actualizat cu succes',
+        updateError: 'Eroare la actualizarea programului',
+      },
     },
     common: {
       loading: 'Se încarcă...',

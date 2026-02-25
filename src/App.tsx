@@ -10,6 +10,7 @@ import { Contact } from './pages/Contact';
 import { Login } from './pages/admin/Login';
 import { Dashboard } from './pages/admin/Dashboard';
 import { PropertiesManagement } from './pages/admin/PropertiesManagement';
+import OpeningHoursManagement from './pages/admin/OpeningHoursManagement';
 
 function LayoutWrapper() {
   return (
@@ -47,6 +48,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <PropertiesManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/opening-hours"
+                element={
+                  <ProtectedRoute>
+                    <OpeningHoursManagement />
                   </ProtectedRoute>
                 }
               />

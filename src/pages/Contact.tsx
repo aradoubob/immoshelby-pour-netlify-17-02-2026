@@ -1,12 +1,33 @@
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, Clock } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useOpeningHours } from '../hooks/useOpeningHours';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Contact() {
   const { language } = useLanguage();
+  const { openingHours, loading: hoursLoading } = useOpeningHours();
 
   const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     window.location.href = 'mailto:immoshelby@gmail.com';
+  };
+
+  const getPeriodLabel = (periodType: string) => {
+    const labels = {
+      weekdays: language === 'fr' ? 'Lundi - Vendredi' : 'Luni - Vineri',
+      saturday: language === 'fr' ? 'Samedi' : 'Sâmbătă',
+      sunday: language === 'fr' ? 'Dimanche' : 'Duminică',
+    };
+    return labels[periodType as keyof typeof labels] || periodType;
+  };
+
+  const formatTime = (time: string | null) => {
+    if (!time) return '';
+    return time.substring(0, 5);
+  };
+
+  const getClosedLabel = () => {
+    return language === 'fr' ? 'Fermé' : 'Închis';
   };
 
   return (
@@ -53,29 +74,31 @@ export function Contact() {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {language === 'fr' ? 'Horaires d\'ouverture' : 'Program de lucru'}
-        </h2>
-        <div className="space-y-3 text-gray-600">
-          <div className="flex justify-between">
-            <span className="font-medium">
-              {language === 'fr' ? 'Lundi - Vendredi' : 'Luni - Vineri'}
-            </span>
-            <span>09:00 - 18:00</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium">
-              {language === 'fr' ? 'Samedi' : 'Sâmbătă'}
-            </span>
-            <span>10:00 - 14:00</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium">
-              {language === 'fr' ? 'Dimanche' : 'Duminică'}
-            </span>
-            <span>{language === 'fr' ? 'Fermé' : 'Închis'}</span>
-          </div>
+        <div className="flex items-center gap-3 mb-6">
+          <Clock className="w-6 h-6 text-blue-600" />
+          <h2 className="text-2xl font-bold text-gray-900">
+            {language === 'fr' ? "Horaires d'ouverture" : 'Program de lucru'}
+          </h2>
         </div>
+
+        {hoursLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="space-y-3 text-gray-600">
+            {openingHours.map((hour) => (
+              <div key={hour.id} className="flex justify-between items-center py-2">
+                <span className="font-medium">{getPeriodLabel(hour.period_type)}</span>
+                <span>
+                  {hour.is_open && hour.opening_time && hour.closing_time
+                    ? `${formatTime(hour.opening_time)} - ${formatTime(hour.closing_time)}`
+                    : getClosedLabel()}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
