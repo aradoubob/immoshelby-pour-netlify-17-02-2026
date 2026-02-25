@@ -228,6 +228,28 @@ export const translations = {
       save: 'Save',
       cancel: 'Cancel',
     },
+    openingHours: {
+      management: {
+        title: 'Opening Hours Management',
+        description: 'Configure your agency opening hours',
+      },
+      weekdays: 'Monday - Friday',
+      saturday: 'Saturday',
+      sunday: 'Sunday',
+      openingTime: 'Opening time',
+      closingTime: 'Closing time',
+      open: 'Open',
+      closed: 'Closed',
+      save: 'Save',
+      saving: 'Saving...',
+      validation: {
+        invalidTime: 'Opening time must be before closing time',
+      },
+      messages: {
+        updateSuccess: 'Hours updated successfully',
+        updateError: 'Error updating hours',
+      },
+    },
     common: {
       loading: 'Loading...',
       error: 'Error',
