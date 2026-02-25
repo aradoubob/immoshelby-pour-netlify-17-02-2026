@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function Contact() {
@@ -22,7 +22,7 @@ export function Contact() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <div className="text-center p-6 bg-white rounded-lg shadow-md">
           <div className="flex justify-center mb-4">
             <div className="bg-blue-100 p-4 rounded-full">
@@ -49,18 +49,6 @@ export function Contact() {
             {language === 'fr' ? 'Téléphone' : 'Telefon'}
           </h3>
           <span className="text-gray-600">+40 786 322 385</span>
-        </div>
-
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-100 p-4 rounded-full">
-              <MapPin className="w-8 h-8 text-blue-600" />
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {language === 'fr' ? 'Adresse' : 'Adresă'}
-          </h3>
-          <p className="text-gray-600">Strada 602 n°32, Pecica, Romania</p>
         </div>
       </div>
 
