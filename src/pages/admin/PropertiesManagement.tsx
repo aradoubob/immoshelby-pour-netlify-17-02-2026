@@ -12,6 +12,9 @@ export function PropertiesManagement() {
   const [showForm, setShowForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const { language, t } = useLanguage();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const itemsPerPage = 10;
 
   const [formData, setFormData] = useState({
     title_ro: '',
@@ -34,17 +37,27 @@ export function PropertiesManagement() {
 
   useEffect(() => {
     loadProperties();
-  }, []);
+  }, [currentPage]);
 
   const loadProperties = async () => {
     try {
+      setLoading(true);
+      const from = (currentPage - 1) * itemsPerPage;
+      const to = from + itemsPerPage - 1;
+
+      const { count } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact', head: true });
+
       const { data, error } = await supabase
         .from('properties')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('id, title_ro, location_ro, price, type, category, surface, rooms, bathrooms, status, featured, images, created_at')
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
       setProperties(data || []);
+      setTotalCount(count || 0);
     } catch (error) {
       console.error('Error loading properties:', error);
     } finally {
@@ -90,27 +103,40 @@ export function PropertiesManagement() {
     }
   };
 
-  const handleEdit = (property: Property) => {
-    setEditingProperty(property);
-    setFormData({
-      title_ro: property.title_ro,
-      description_ro: property.description_ro,
-      price: property.price.toString(),
-      type: property.type,
-      category: property.category,
-      surface: property.surface.toString(),
-      rooms: property.rooms.toString(),
-      bathrooms: property.bathrooms.toString(),
-      location_ro: property.location_ro,
-      city: property.city,
-      images: property.images.length > 0 ? property.images : [''],
-      features: property.features.length > 0 ? property.features : [''],
-      latitude: property.latitude?.toString() || '',
-      longitude: property.longitude?.toString() || '',
-      featured: property.featured,
-      status: property.status,
-    });
-    setShowForm(true);
+  const handleEdit = async (propertyId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('id', propertyId)
+        .single();
+
+      if (error) throw error;
+      if (!data) return;
+
+      setEditingProperty(data);
+      setFormData({
+        title_ro: data.title_ro,
+        description_ro: data.description_ro,
+        price: data.price.toString(),
+        type: data.type,
+        category: data.category,
+        surface: data.surface.toString(),
+        rooms: data.rooms.toString(),
+        bathrooms: data.bathrooms.toString(),
+        location_ro: data.location_ro,
+        city: data.city,
+        images: data.images.length > 0 ? data.images : [''],
+        features: data.features.length > 0 ? data.features : [''],
+        latitude: data.latitude?.toString() || '',
+        longitude: data.longitude?.toString() || '',
+        featured: data.featured,
+        status: data.status,
+      });
+      setShowForm(true);
+    } catch (error) {
+      console.error('Error loading property details:', error);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -169,10 +195,6 @@ export function PropertiesManagement() {
       features: formData.features.filter((_, i) => i !== index),
     });
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -529,53 +551,104 @@ export function PropertiesManagement() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6">
-        {properties.map((property) => (
-          <div key={property.id} className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-start space-x-6">
-              <img
-                src={property.images[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
-                alt={property.title_ro}
-                className="w-48 h-32 object-cover rounded-lg"
-              />
-
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{property.title_ro}</h3>
-                    <p className="text-gray-600 mb-2">{property.location_ro}</p>
-                    <div className="flex space-x-4 text-sm text-gray-600">
-                      <span>{property.surface} m²</span>
-                      {property.rooms > 0 && <span>{property.rooms} chambres</span>}
-                      <span className="capitalize">{property.type}</span>
+      {loading ? (
+        <div className="grid grid-cols-1 gap-6">
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-md p-6 animate-pulse">
+              <div className="flex items-start space-x-6">
+                <div className="w-48 h-32 bg-gray-200 rounded-lg"></div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
                     </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600 mb-2">
-                      €{property.price.toLocaleString()}
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(property)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      >
-                        <Edit2 className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(property.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                    <div className="text-right">
+                      <div className="h-8 bg-gray-200 rounded w-24 mb-2"></div>
+                      <div className="flex space-x-2">
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6">
+          {properties.map((property) => (
+            <div key={property.id} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-start space-x-6">
+                <img
+                  src={property.images[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
+                  alt={property.title_ro}
+                  className="w-48 h-32 object-cover rounded-lg"
+                  loading="lazy"
+                />
+
+                <div className="flex-1">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{property.title_ro}</h3>
+                      <p className="text-gray-600 mb-2">{property.location_ro}</p>
+                      <div className="flex space-x-4 text-sm text-gray-600">
+                        <span>{property.surface} m²</span>
+                        {property.rooms > 0 && <span>{property.rooms} chambres</span>}
+                        <span className="capitalize">{property.type}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-blue-600 mb-2">
+                        €{property.price.toLocaleString()}
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEdit(property.id)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                        >
+                          <Edit2 className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(property.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {totalCount > itemsPerPage && (
+        <div className="mt-8 flex justify-center items-center space-x-4">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Précédent
+          </button>
+          <span className="text-gray-700">
+            Page {currentPage} sur {Math.ceil(totalCount / itemsPerPage)} ({totalCount} propriétés)
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(Math.ceil(totalCount / itemsPerPage), prev + 1))}
+            disabled={currentPage >= Math.ceil(totalCount / itemsPerPage)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Suivant
+          </button>
+        </div>
+      )}
     </div>
   );
 }
