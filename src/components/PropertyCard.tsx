@@ -11,7 +11,7 @@ interface PropertyCardProps {
 export function PropertyCard({ property }: PropertyCardProps) {
   const { language } = useLanguage();
   const { title, location } = useTranslatedProperty(property);
-  const mainImage = property.images[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg';
+  const mainImage = property.image_urls?.[0] || property.images?.[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg';
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105">

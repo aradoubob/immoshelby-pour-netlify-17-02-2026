@@ -5,6 +5,8 @@ import { Property } from '../../types';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ImageUploader from '../../components/ImageUploader';
+import { uploadPropertyImages, deleteAllPropertyImages, dataUrlToFile } from '../../lib/storageHelpers';
 
 export function PropertiesManagement() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -15,6 +17,9 @@ export function PropertiesManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
+
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title_ro: '',
@@ -27,7 +32,7 @@ export function PropertiesManagement() {
     bathrooms: '',
     location_ro: '',
     city: '',
-    images: [''],
+    imageUrls: [] as string[],
     features: [''],
     latitude: '',
     longitude: '',
@@ -45,13 +50,9 @@ export function PropertiesManagement() {
       const from = (currentPage - 1) * itemsPerPage;
       const to = from + itemsPerPage - 1;
 
-      const { count } = await supabase
+      const { data, error, count } = await supabase
         .from('properties')
-        .select('*', { count: 'exact', head: true });
-
-      const { data, error } = await supabase
-        .from('properties')
-        .select('id, title_ro, location_ro, price, type, category, surface, rooms, bathrooms, status, featured, images, created_at')
+        .select('id, title_ro, location_ro, price, type, category, surface, rooms, bathrooms, status, featured, image_urls, created_at', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(from, to);
 
@@ -67,39 +68,98 @@ export function PropertiesManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const propertyData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      surface: parseFloat(formData.surface),
-      rooms: parseInt(formData.rooms) || 0,
-      bathrooms: parseInt(formData.bathrooms) || 0,
-      latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-      longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-      images: formData.images.filter(img => img.trim() !== ''),
-      features: formData.features.filter(f => f.trim() !== ''),
-    };
+    setSaving(true);
 
     try {
-      if (editingProperty) {
-        const { error } = await supabase
-          .from('properties')
-          .update(propertyData)
-          .eq('id', editingProperty.id);
+      let propertyId = editingProperty?.id;
+      let uploadedImageUrls: string[] = [];
 
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('properties').insert([propertyData]);
-        if (error) throw error;
+      if (!propertyId) {
+        const { data: newProperty, error: insertError } = await supabase
+          .from('properties')
+          .insert([{
+            title_ro: formData.title_ro,
+            description_ro: formData.description_ro,
+            price: parseFloat(formData.price),
+            surface: parseFloat(formData.surface),
+            rooms: parseInt(formData.rooms) || 0,
+            bathrooms: parseInt(formData.bathrooms) || 0,
+            type: formData.type,
+            category: formData.category,
+            location_ro: formData.location_ro,
+            city: formData.city,
+            latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+            longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+            features: formData.features.filter(f => f.trim() !== ''),
+            featured: formData.featured,
+            status: formData.status,
+            image_urls: []
+          }])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        propertyId = newProperty.id;
+      }
+
+      const dataUrlImages = formData.imageUrls.filter(url => url.startsWith('data:'));
+      if (dataUrlImages.length > 0) {
+        const imageFiles = await Promise.all(
+          dataUrlImages.map((dataUrl, index) =>
+            dataUrlToFile(dataUrl, `image-${index}.jpg`)
+          )
+        );
+
+        uploadedImageUrls = await uploadPropertyImages(propertyId!, imageFiles);
+      }
+
+      const existingImageUrls = formData.imageUrls.filter(url => !url.startsWith('data:'));
+      const allImageUrls = [...existingImageUrls, ...uploadedImageUrls];
+
+      const propertyData = {
+        title_ro: formData.title_ro,
+        description_ro: formData.description_ro,
+        price: parseFloat(formData.price),
+        surface: parseFloat(formData.surface),
+        rooms: parseInt(formData.rooms) || 0,
+        bathrooms: parseInt(formData.bathrooms) || 0,
+        type: formData.type,
+        category: formData.category,
+        location_ro: formData.location_ro,
+        city: formData.city,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+        features: formData.features.filter(f => f.trim() !== ''),
+        featured: formData.featured,
+        status: formData.status,
+        image_urls: allImageUrls
+      };
+
+      const { error: updateError } = await supabase
+        .from('properties')
+        .update(propertyData)
+        .eq('id', propertyId);
+
+      if (updateError) throw updateError;
+
+      if (editingProperty && editingProperty.image_urls) {
+        const removedImages = editingProperty.image_urls.filter(
+          url => !allImageUrls.includes(url)
+        );
+        if (removedImages.length > 0) {
+          await deleteAllPropertyImages(removedImages);
+        }
       }
 
       setShowForm(false);
       setEditingProperty(null);
       resetForm();
-      loadProperties();
+      await loadProperties();
     } catch (error) {
       console.error('Error saving property:', error);
-      alert('Error saving property');
+      alert('Erreur lors de la sauvegarde de la propriété');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -126,7 +186,7 @@ export function PropertiesManagement() {
         bathrooms: data.bathrooms.toString(),
         location_ro: data.location_ro,
         city: data.city,
-        images: data.images.length > 0 ? data.images : [''],
+        imageUrls: data.image_urls || [],
         features: data.features.length > 0 ? data.features : [''],
         latitude: data.latitude?.toString() || '',
         longitude: data.longitude?.toString() || '',
@@ -144,12 +204,23 @@ export function PropertiesManagement() {
       return;
     }
 
+    setDeleting(id);
     try {
+      const property = properties.find(p => p.id === id);
+      if (property?.image_urls && property.image_urls.length > 0) {
+        await deleteAllPropertyImages(property.image_urls);
+      }
+
       const { error } = await supabase.from('properties').delete().eq('id', id);
       if (error) throw error;
-      loadProperties();
+
+      setProperties(prev => prev.filter(p => p.id !== id));
+      setTotalCount(prev => prev - 1);
     } catch (error) {
       console.error('Error deleting property:', error);
+      alert('Erreur lors de la suppression');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -165,23 +236,12 @@ export function PropertiesManagement() {
       bathrooms: '',
       location_ro: '',
       city: '',
-      images: [''],
+      imageUrls: [],
       features: [''],
       latitude: '',
       longitude: '',
       featured: false,
       status: 'available',
-    });
-  };
-
-  const addImageField = () => {
-    setFormData({ ...formData, images: [...formData.images, ''] });
-  };
-
-  const removeImageField = (index: number) => {
-    setFormData({
-      ...formData,
-      images: formData.images.filter((_, i) => i !== index),
     });
   };
 
@@ -371,80 +431,11 @@ export function PropertiesManagement() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Images (URLs ou copier-coller d'images)
-                </label>
-                <div className="mb-4 p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-                  <p className="text-sm text-gray-600 mb-2">
-                    💡 Astuce: Vous pouvez copier une image (Ctrl+C) et la coller (Ctrl+V) dans les champs ci-dessous
-                  </p>
-                </div>
-                {formData.images.map((image, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="flex space-x-2 mb-2">
-                      <input
-                        type="text"
-                        value={image}
-                        onChange={(e) => {
-                          const newImages = [...formData.images];
-                          newImages[index] = e.target.value;
-                          setFormData({ ...formData, images: newImages });
-                        }}
-                        onPaste={(e) => {
-                          const items = e.clipboardData?.items;
-                          if (items) {
-                            for (let i = 0; i < items.length; i++) {
-                              if (items[i].type.indexOf('image') !== -1) {
-                                e.preventDefault();
-                                const blob = items[i].getAsFile();
-                                if (blob) {
-                                  const reader = new FileReader();
-                                  reader.onload = (event) => {
-                                    const newImages = [...formData.images];
-                                    newImages[index] = event.target?.result as string;
-                                    setFormData({ ...formData, images: newImages });
-                                  };
-                                  reader.readAsDataURL(blob);
-                                }
-                                break;
-                              }
-                            }
-                          }
-                        }}
-                        placeholder="Collez une image ou entrez une URL: https://example.com/image.jpg"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      {formData.images.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeImageField(index)}
-                          className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
-                      )}
-                    </div>
-                    {image && (
-                      <img
-                        src={image}
-                        alt={`Aperçu ${index + 1}`}
-                        className="w-32 h-32 object-cover rounded-lg border border-gray-200"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addImageField}
-                  className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-                >
-                  + Ajouter une image
-                </button>
-              </div>
+              <ImageUploader
+                images={formData.imageUrls}
+                onChange={(images) => setFormData({ ...formData, imageUrls: images })}
+                maxImages={10}
+              />
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Caractéristiques</label>
@@ -530,8 +521,8 @@ export function PropertiesManagement() {
               </div>
 
               <div className="flex space-x-4 pt-4">
-                <Button type="submit" className="flex-1">
-                  {t.admin.save}
+                <Button type="submit" className="flex-1" disabled={saving}>
+                  {saving ? 'Enregistrement...' : t.admin.save}
                 </Button>
                 <Button
                   type="button"
@@ -542,6 +533,7 @@ export function PropertiesManagement() {
                     resetForm();
                   }}
                   className="flex-1"
+                  disabled={saving}
                 >
                   {t.admin.cancel}
                 </Button>
@@ -580,10 +572,15 @@ export function PropertiesManagement() {
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {properties.map((property) => (
-            <div key={property.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={property.id} className="bg-white rounded-lg shadow-md p-6 relative">
+              {deleting === property.id && (
+                <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-lg z-10">
+                  <LoadingSpinner />
+                </div>
+              )}
               <div className="flex items-start space-x-6">
                 <img
-                  src={property.images[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
+                  src={property.image_urls?.[0] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
                   alt={property.title_ro}
                   className="w-48 h-32 object-cover rounded-lg"
                   loading="lazy"
@@ -598,6 +595,9 @@ export function PropertiesManagement() {
                         <span>{property.surface} m²</span>
                         {property.rooms > 0 && <span>{property.rooms} chambres</span>}
                         <span className="capitalize">{property.type}</span>
+                        {property.image_urls && property.image_urls.length > 0 && (
+                          <span className="text-blue-600">{property.image_urls.length} images</span>
+                        )}
                       </div>
                     </div>
 
@@ -608,13 +608,15 @@ export function PropertiesManagement() {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleEdit(property.id)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg disabled:opacity-50"
+                          disabled={deleting === property.id}
                         >
                           <Edit2 className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(property.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50"
+                          disabled={deleting === property.id}
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>

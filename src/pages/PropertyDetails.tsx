@@ -51,20 +51,22 @@ export function PropertyDetails() {
     );
   }
 
+  const displayImages = property.image_urls && property.image_urls.length > 0 ? property.image_urls : property.images;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <div className="mb-4">
             <img
-              src={property.images[selectedImage] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
+              src={displayImages[selectedImage] || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg'}
               alt={title}
               className="w-full h-[500px] object-cover rounded-lg shadow-lg"
             />
           </div>
 
           <div className="grid grid-cols-4 gap-2">
-            {property.images.map((image, index) => (
+            {displayImages.map((image, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedImage(index)}

@@ -17,6 +17,7 @@ export interface Property {
   location_en?: string;
   city: string;
   images: string[];
+  image_urls?: string[];
   features: string[];
   latitude?: number;
   longitude?: number;
