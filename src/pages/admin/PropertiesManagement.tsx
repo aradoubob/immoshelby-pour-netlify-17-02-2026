@@ -434,7 +434,7 @@ export function PropertiesManagement() {
               <ImageUploader
                 images={formData.imageUrls}
                 onChange={(images) => setFormData({ ...formData, imageUrls: images })}
-                maxImages={10}
+                maxImages={25}
               />
 
               <div>
