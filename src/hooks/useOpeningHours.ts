@@ -7,6 +7,7 @@ export interface OpeningHour {
   opening_time: string | null;
   closing_time: string | null;
   is_open: boolean;
+  custom_message?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -52,6 +53,7 @@ export function useOpeningHours() {
           opening_time: updates.opening_time,
           closing_time: updates.closing_time,
           is_open: updates.is_open,
+          custom_message: updates.custom_message,
           updated_at: new Date().toISOString(),
         })
         .eq('id', updates.id);

@@ -91,7 +91,9 @@ export function Contact() {
               <div key={hour.id} className="flex justify-between items-center py-2">
                 <span className="font-medium">{getPeriodLabel(hour.period_type)}</span>
                 <span>
-                  {hour.is_open && hour.opening_time && hour.closing_time
+                  {hour.custom_message
+                    ? hour.custom_message
+                    : hour.is_open && hour.opening_time && hour.closing_time
                     ? `${formatTime(hour.opening_time)} - ${formatTime(hour.closing_time)}`
                     : getClosedLabel()}
                 </span>

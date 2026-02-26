@@ -10,6 +10,7 @@ interface PeriodData {
   openingTime: string;
   closingTime: string;
   isOpen: boolean;
+  customMessage: string;
 }
 
 export default function OpeningHoursManagement() {
@@ -23,6 +24,7 @@ export default function OpeningHoursManagement() {
     openingTime: '09:00',
     closingTime: '18:00',
     isOpen: true,
+    customMessage: '',
   });
 
   const [saturday, setSaturday] = useState<PeriodData>({
@@ -30,6 +32,7 @@ export default function OpeningHoursManagement() {
     openingTime: '10:00',
     closingTime: '14:00',
     isOpen: true,
+    customMessage: '',
   });
 
   const [sunday, setSunday] = useState<PeriodData>({
@@ -37,6 +40,7 @@ export default function OpeningHoursManagement() {
     openingTime: '10:00',
     closingTime: '14:00',
     isOpen: false,
+    customMessage: '',
   });
 
   useEffect(() => {
@@ -51,6 +55,7 @@ export default function OpeningHoursManagement() {
           openingTime: weekdaysData.opening_time?.substring(0, 5) || '09:00',
           closingTime: weekdaysData.closing_time?.substring(0, 5) || '18:00',
           isOpen: weekdaysData.is_open,
+          customMessage: weekdaysData.custom_message || '',
         });
       }
 
@@ -60,6 +65,7 @@ export default function OpeningHoursManagement() {
           openingTime: saturdayData.opening_time?.substring(0, 5) || '10:00',
           closingTime: saturdayData.closing_time?.substring(0, 5) || '14:00',
           isOpen: saturdayData.is_open,
+          customMessage: saturdayData.custom_message || '',
         });
       }
 
@@ -69,6 +75,7 @@ export default function OpeningHoursManagement() {
           openingTime: sundayData.opening_time?.substring(0, 5) || '10:00',
           closingTime: sundayData.closing_time?.substring(0, 5) || '14:00',
           isOpen: sundayData.is_open,
+          customMessage: sundayData.custom_message || '',
         });
       }
     }
@@ -105,18 +112,21 @@ export default function OpeningHoursManagement() {
           opening_time: weekdays.isOpen ? weekdays.openingTime : null,
           closing_time: weekdays.isOpen ? weekdays.closingTime : null,
           is_open: weekdays.isOpen,
+          custom_message: weekdays.customMessage || null,
         },
         {
           id: saturday.id,
           opening_time: saturday.isOpen ? saturday.openingTime : null,
           closing_time: saturday.isOpen ? saturday.closingTime : null,
           is_open: saturday.isOpen,
+          custom_message: saturday.customMessage || null,
         },
         {
           id: sunday.id,
           opening_time: sunday.isOpen ? sunday.openingTime : null,
           closing_time: sunday.isOpen ? sunday.closingTime : null,
           is_open: sunday.isOpen,
+          custom_message: sunday.customMessage || null,
         },
       ];
 
@@ -170,7 +180,20 @@ export default function OpeningHoursManagement() {
           </label>
         </div>
 
-        {data.isOpen && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t.openingHours.customMessage}
+          </label>
+          <input
+            type="text"
+            value={data.customMessage}
+            onChange={(e) => setter({ ...data, customMessage: e.target.value })}
+            placeholder={t.openingHours.customMessagePlaceholder}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+
+        {data.isOpen && !data.customMessage && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

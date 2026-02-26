@@ -35,4 +35,15 @@ export interface AdminProfile {
   created_at: string;
 }
 
+export interface OpeningHours {
+  id: string;
+  period_type: 'weekdays' | 'saturday' | 'sunday';
+  opening_time: string | null;
+  closing_time: string | null;
+  is_open: boolean;
+  custom_message?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export type Language = 'fr' | 'ro' | 'en';

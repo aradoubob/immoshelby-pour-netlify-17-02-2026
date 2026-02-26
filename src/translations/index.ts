@@ -68,6 +68,8 @@ export const translations = {
       closingTime: 'Heure de fermeture',
       open: 'Ouvert',
       closed: 'Fermé',
+      customMessage: 'Message personnalisé',
+      customMessagePlaceholder: 'Ex: Sur rendez-vous, avec programmation...',
       save: 'Enregistrer',
       saving: 'Enregistrement...',
       validation: {
@@ -154,6 +156,8 @@ export const translations = {
       closingTime: 'Ora de închidere',
       open: 'Deschis',
       closed: 'Închis',
+      customMessage: 'Mesaj personalizat',
+      customMessagePlaceholder: 'Ex: Cu programare, numai cu programare...',
       save: 'Salvează',
       saving: 'Se salvează...',
       validation: {
@@ -240,6 +244,8 @@ export const translations = {
       closingTime: 'Closing time',
       open: 'Open',
       closed: 'Closed',
+      customMessage: 'Custom message',
+      customMessagePlaceholder: 'Ex: By appointment only, with appointment...',
       save: 'Save',
       saving: 'Saving...',
       validation: {
