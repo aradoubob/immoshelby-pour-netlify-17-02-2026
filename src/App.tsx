@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Home } from './pages/Home';
 import { PropertiesList } from './pages/PropertiesList';
 import { PropertyDetails } from './pages/PropertyDetails';
@@ -21,51 +22,55 @@ function LayoutWrapper() {
 }
 
 function App() {
+  console.log('App component rendering...');
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <LanguageProvider>
-          <Routes>
-            <Route path="/admin/login" element={<Login />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <LanguageProvider>
+            <Routes>
+              <Route path="/admin/login" element={<Login />} />
 
-            <Route element={<LayoutWrapper />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/sale" element={<PropertiesList />} />
-              <Route path="/rent" element={<PropertiesList />} />
-              <Route path="/property/:id" element={<PropertyDetails />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route element={<LayoutWrapper />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/sale" element={<PropertiesList />} />
+                <Route path="/rent" element={<PropertiesList />} />
+                <Route path="/property/:id" element={<PropertyDetails />} />
+                <Route path="/contact" element={<Contact />} />
 
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/properties"
-                element={
-                  <ProtectedRoute>
-                    <PropertiesManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/opening-hours"
-                element={
-                  <ProtectedRoute>
-                    <OpeningHoursManagement />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/properties"
+                  element={
+                    <ProtectedRoute>
+                      <PropertiesManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/opening-hours"
+                  element={
+                    <ProtectedRoute>
+                      <OpeningHoursManagement />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
 
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </LanguageProvider>
-      </AuthProvider>
-    </BrowserRouter>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </LanguageProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
