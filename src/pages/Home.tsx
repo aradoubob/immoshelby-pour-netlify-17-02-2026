@@ -51,7 +51,7 @@ export function Home() {
     <>
       <div className="relative h-[600px]">
         <img
-          src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="/hero.jpg"
           alt="ImmoShelby"
           className="w-full h-full object-cover"
         />
