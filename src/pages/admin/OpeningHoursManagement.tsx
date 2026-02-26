@@ -48,8 +48,8 @@ export default function OpeningHoursManagement() {
       if (weekdaysData) {
         setWeekdays({
           id: weekdaysData.id,
-          openingTime: weekdaysData.opening_time || '09:00',
-          closingTime: weekdaysData.closing_time || '18:00',
+          openingTime: weekdaysData.opening_time?.substring(0, 5) || '09:00',
+          closingTime: weekdaysData.closing_time?.substring(0, 5) || '18:00',
           isOpen: weekdaysData.is_open,
         });
       }
@@ -57,8 +57,8 @@ export default function OpeningHoursManagement() {
       if (saturdayData) {
         setSaturday({
           id: saturdayData.id,
-          openingTime: saturdayData.opening_time || '10:00',
-          closingTime: saturdayData.closing_time || '14:00',
+          openingTime: saturdayData.opening_time?.substring(0, 5) || '10:00',
+          closingTime: saturdayData.closing_time?.substring(0, 5) || '14:00',
           isOpen: saturdayData.is_open,
         });
       }
@@ -66,8 +66,8 @@ export default function OpeningHoursManagement() {
       if (sundayData) {
         setSunday({
           id: sundayData.id,
-          openingTime: sundayData.opening_time || '10:00',
-          closingTime: sundayData.closing_time || '14:00',
+          openingTime: sundayData.opening_time?.substring(0, 5) || '10:00',
+          closingTime: sundayData.closing_time?.substring(0, 5) || '14:00',
           isOpen: sundayData.is_open,
         });
       }
