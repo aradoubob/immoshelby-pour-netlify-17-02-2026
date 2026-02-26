@@ -81,17 +81,17 @@ export default function OpeningHoursManagement() {
 
   const handleSave = async () => {
     if (weekdays.isOpen && !validateTime(weekdays.openingTime, weekdays.closingTime)) {
-      setMessage({ type: 'error', text: t('openingHours.validation.invalidTime') });
+      setMessage({ type: 'error', text: t.openingHours.validation.invalidTime });
       return;
     }
 
     if (saturday.isOpen && !validateTime(saturday.openingTime, saturday.closingTime)) {
-      setMessage({ type: 'error', text: t('openingHours.validation.invalidTime') });
+      setMessage({ type: 'error', text: t.openingHours.validation.invalidTime });
       return;
     }
 
     if (sunday.isOpen && !validateTime(sunday.openingTime, sunday.closingTime)) {
-      setMessage({ type: 'error', text: t('openingHours.validation.invalidTime') });
+      setMessage({ type: 'error', text: t.openingHours.validation.invalidTime });
       return;
     }
 
@@ -125,12 +125,12 @@ export default function OpeningHoursManagement() {
       const hasError = results.some((result) => !result.success);
 
       if (hasError) {
-        setMessage({ type: 'error', text: t('openingHours.messages.updateError') });
+        setMessage({ type: 'error', text: t.openingHours.messages.updateError });
       } else {
-        setMessage({ type: 'success', text: t('openingHours.messages.updateSuccess') });
+        setMessage({ type: 'success', text: t.openingHours.messages.updateSuccess });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: t('openingHours.messages.updateError') });
+      setMessage({ type: 'error', text: t.openingHours.messages.updateError });
     } finally {
       setSaving(false);
     }
@@ -165,7 +165,7 @@ export default function OpeningHoursManagement() {
               className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
             <span className="font-medium">
-              {data.isOpen ? t('openingHours.open') : t('openingHours.closed')}
+              {data.isOpen ? t.openingHours.open : t.openingHours.closed}
             </span>
           </label>
         </div>
@@ -174,7 +174,7 @@ export default function OpeningHoursManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('openingHours.openingTime')}
+                {t.openingHours.openingTime}
               </label>
               <input
                 type="time"
@@ -186,7 +186,7 @@ export default function OpeningHoursManagement() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('openingHours.closingTime')}
+                {t.openingHours.closingTime}
               </label>
               <input
                 type="time"
@@ -206,9 +206,9 @@ export default function OpeningHoursManagement() {
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {t('openingHours.management.title')}
+            {t.openingHours.management.title}
           </h1>
-          <p className="text-gray-600">{t('openingHours.management.description')}</p>
+          <p className="text-gray-600">{t.openingHours.management.description}</p>
         </div>
 
         {message && (
@@ -229,9 +229,9 @@ export default function OpeningHoursManagement() {
         )}
 
         <div className="space-y-6 mb-8">
-          {renderPeriodSection(t('openingHours.weekdays'), weekdays, setWeekdays)}
-          {renderPeriodSection(t('openingHours.saturday'), saturday, setSaturday)}
-          {renderPeriodSection(t('openingHours.sunday'), sunday, setSunday)}
+          {renderPeriodSection(t.openingHours.weekdays, weekdays, setWeekdays)}
+          {renderPeriodSection(t.openingHours.saturday, saturday, setSaturday)}
+          {renderPeriodSection(t.openingHours.sunday, sunday, setSunday)}
         </div>
 
         <div className="flex justify-end">
@@ -239,12 +239,12 @@ export default function OpeningHoursManagement() {
             {saving ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                {t('openingHours.saving')}
+                {t.openingHours.saving}
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                {t('openingHours.save')}
+                {t.openingHours.save}
               </>
             )}
           </Button>
