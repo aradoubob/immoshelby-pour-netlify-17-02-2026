@@ -23,12 +23,16 @@ export function useOpeningHours() {
 
       const { data, error: fetchError } = await supabase
         .from('opening_hours')
-        .select('*')
-        .order('period_type');
+        .select('*');
 
       if (fetchError) throw fetchError;
 
-      setOpeningHours(data || []);
+      const periodOrder = { weekdays: 1, saturday: 2, sunday: 3 };
+      const sortedData = (data || []).sort((a, b) => {
+        return periodOrder[a.period_type] - periodOrder[b.period_type];
+      });
+
+      setOpeningHours(sortedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch opening hours');
     } finally {
